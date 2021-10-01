@@ -1,14 +1,30 @@
 import { Header, Nav, Main, Footer } from "./components";
+import * as state from "./store";
+import Navigo from "navigo";
+import { capitalize } from "lodash";
 
-function render() {
+const router = new Navigo(window.location.origin);
+
+router
+  .on({
+    "/": () => render(state.Home),
+    ":page": params => {
+      let page = capitalize(params.page);
+      render(state[page]);
+    }
+  })
+  .resolve();
+
+function render(st) {
   document.querySelector("#root").innerHTML = `
-  ${Header()}
-  ${Nav()}
-  ${Main()}
+  ${Header(st)}
+  ${Nav(state.Links)}
+  ${Main(st)}
   ${Footer()}
   `;
+  router.updatePageLinks();
 }
-render();
+
 // add menu toggle to bars icon in nav bar
 document.querySelector(".fa-bars").addEventListener("click", () => {
   document.querySelector("nav > ul").classList.toggle("hidden--mobile");
@@ -73,11 +89,11 @@ dogPictures.forEach(pic => {
 });
 
 // handle form submission
-document.querySelector("form").addEventListener("submit", event => {
-  event.preventDefault();
-  Array.from(event.target.elements).forEach(el => {
-    console.log("Input Type: ", el.type);
-    console.log("Name: ", el.name);
-    console.log("Value: ", el.value);
-  });
-});
+// document.querySelector("form").addEventListener("submit", event => {
+//   event.preventDefault();
+//   Array.from(event.target.elements).forEach(el => {
+//     console.log("Input Type: ", el.type);
+//     console.log("Name: ", el.name);
+//     console.log("Value: ", el.value);
+//   });
+// });
